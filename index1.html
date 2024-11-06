@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARIA Label Visual Debugging</title>
+    <style>
+        /* Default styles for elements with aria-label */
+        [aria-label]:before {
+            content: "🚨 aria-label: " attr(aria-label); /* Display the aria-label content */
+            border: 2px solid darkred; /* Dark red border to highlight the label */
+            color: darkred; /* Dark red text color */
+            display: inline-block; /* Makes the content inline with the element */
+            padding: 0 5px; /* Padding around the aria-label text */
+            margin: 2px 5px 2px 0; /* Margin to separate from the element */
+            border-radius: 5px; /* Rounded corners */
+            background: white; /* White background to make text stand out */
+            font-size: 14px; /* Font size for readability */
+            font-family: sans-serif; /* Sans-serif font for better readability */
+            font-weight: bold; /* Bold text for visibility */
+        }
+
+        /* Special styling for button with aria-label */
+        button[aria-label]:before {
+            content: "⚠️ aria-label: " attr(aria-label); /* Add icon for buttons */
+            border-color: orange; /* Orange border for buttons */
+            color: black; /* Black text for better contrast */
+        }
+
+        /* Special styling for link with aria-label */
+        a[aria-label]:before {
+            content: "⚠️ aria-label: " attr(aria-label); /* Same alert icon for links */
+            border-color: #0066cc; /* Blue border for links */
+            color: #0066cc; /* Blue text for links */
+        }
+
+        /* Special styling for div with aria-label */
+        div[aria-label]:before {
+            content: "🔳 aria-label: " attr(aria-label); /* Add dialog icon for divs with aria-label */
+            border-color: green; /* Green border for divs */
+            color: green; /* Green text for divs */
+            background-color: #e8f5e9; /* Light green background */
+        }
+
+        /* Special styling for navigation with aria-label */
+        nav[aria-label]:before {
+            content: "🔗 aria-label: " attr(aria-label); /* Navigation icon for aria-label */
+            border-color: #0288d1; /* Blue border for navigation */
+            color: #0288d1; /* Blue text for navigation */
+            background-color: #e3f2fd; /* Light blue background */
+        }
+
+        /* Special styling for alert with aria-label */
+        div[aria-label="error"]:before {
+            content: "🚨 aria-label: error";
+            border-color: red; /* Red border for alerts */
+            color: red; /* Red text for alerts */
+            background-color: #ffebee; /* Light red background */
+        }
+
+        /* Special styling for header with aria-label */
+        header[aria-label]:before {
+            content: "📰 aria-label: " attr(aria-label); /* Header icon for aria-label */
+            border-color: #4caf50; /* Green border for header */
+            color: #4caf50; /* Green text for header */
+            background-color: #c8e6c9; /* Light green background */
+        }
+    </style>
+</head>
+<body>
+    <h1>ARIA Label Visual Debugging Example</h1>
+
+    <!-- Example of a button with aria-label -->
+    <button aria-label="Submit form">Submit</button>
+
+    <!-- Example of a link with aria-label -->
+    <a href="#" aria-label="Go to homepage">Homepage</a>
+
+    <!-- Example of a div with aria-label -->
+    <div aria-label="Dialog box">
+        <h2>Dialog Title</h2>
+        <p>This is a dialog box.</p>
+        <button>Close</button>
+    </div>
+
+    <!-- Example of a navigation with aria-label -->
+    <nav aria-label="Main navigation">
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- Example of an alert with aria-label -->
+    <div aria-label="error">
+        <p>This is an important message for the user.</p>
+    </div>
+
+    <!-- Example of a header with aria-label -->
+    <header aria-label="Website Header">
+        <h1>Website Header</h1>
+    </header>
+
+    <p>Some content after the ARIA label elements to show page flow.</p>
+</body>
+</html>

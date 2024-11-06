@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARIA Label and Text Comparison</title>
+    <style>
+        /* Default styles for elements with aria-label */
+        [aria-label]:before {
+            content: "aria-label: " attr(aria-label);
+            border: 2px solid darkred;
+            color: darkred;
+            display: inline-block;
+            padding: 0 5px;
+            margin: 2px 5px 2px 0;
+            border-radius: 5px;
+            background: white;
+            font-size: 14px;
+            font-family: sans-serif;
+            font-weight: bold;
+        }
+
+        /* Styling for error when aria-label matches the button/link text */
+        .error:before {
+            content: "⚠️ ERROR: aria-label matches button/text!";
+            border-color: red;
+            color: red;
+            background-color: #ffebee;
+        }
+
+        /* Styling for buttons and links with aria-label */
+        button[aria-label], a[aria-label] {
+            font-size: 16px;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[aria-label].error {
+            border-color: red;
+            color: red;
+        }
+
+        a[aria-label].error {
+            border-color: red;
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>ARIA Label and Text Comparison</h1>
+
+    <!-- Example of a button with aria-label -->
+    <button aria-label="Submit form">Submit form</button>
+
+    <!-- Example of a link with aria-label -->
+    <a href="#" aria-label="Go to homepage">Go to homepage</a>
+
+    <!-- Example of a button where aria-label doesn't match text -->
+    <button aria-label="Submit form">Submit</button>
+
+    <!-- Example of a link where aria-label doesn't match text -->
+    <a href="#" aria-label="Go to homepage">Visit our homepage</a>
+
+    <script>
+        // JavaScript to compare aria-label and text content for buttons and links
+        document.querySelectorAll('button[aria-label], a[aria-label]').forEach(function(element) {
+            const ariaLabel = element.getAttribute('aria-label');
+            const elementText = element.textContent.trim();
+
+            // If aria-label matches text content, add the "error" class
+            if (ariaLabel === elementText) {
+                element.classList.add('error');
+            }
+        });
+    </script>
+</body>
+</html>
