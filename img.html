@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Alt Text Visual Debugging</title>
+    <style>
+        /* Wrapper for the image and label */
+        .image-wrapper {
+            display: inline-block;
+            position: relative;
+            margin: 10px;
+            text-align: center; /* Centers the text below the image */
+        }
+
+        /* Basic styling for images */
+        .image-wrapper img {
+            display: block;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            background-color: #e8e8e8;
+        }
+
+        /* Styling for alt text below the image */
+        .alt-text {
+            font-size: 14px;
+            font-family: sans-serif;
+            font-weight: bold;
+            color: darkred;
+            border: 2px solid darkred;
+            padding: 5px;
+            margin-top: 5px;
+            border-radius: 5px;
+            background: white;
+        }
+
+        /* Specific styling for empty alt text */
+        .alt-empty {
+            color: red;
+            border-color: red;
+            background-color: #ffebee;
+        }
+
+        /* Specific styling for decorative alt text */
+        .alt-decorative {
+            color: gray;
+            border-color: gray;
+            background-color: #f5f5f5;
+        }
+    </style>
+</head>
+<body>
+    <h1>Image Alt Text Visual Debugging Example</h1>
+
+    <div class="image-wrapper">
+        <img src="https://via.placeholder.com/150" alt="Placeholder image of a laptop" />
+    </div>
+
+    <div class="image-wrapper">
+        <img src="https://via.placeholder.com/150" alt="" />
+    </div>
+
+    <div class="image-wrapper">
+        <img src="https://via.placeholder.com/150" alt="decorative" />
+    </div>
+
+    <p>Some content after the images to show page flow.</p>
+
+    <script>
+        // JavaScript to insert alt text dynamically below the images
+        document.querySelectorAll('.image-wrapper img').forEach(function(img) {
+            const altText = img.getAttribute('alt');
+            const wrapper = img.closest('.image-wrapper');
+            let altTextElement = document.createElement('div'); // Create a div for alt text
+
+            // Set the text and class based on the alt text
+            if (altText === "") {
+                altTextElement.textContent = "⚠️ alt: empty";
+                altTextElement.classList.add('alt-text', 'alt-empty');
+            } else if (altText.toLowerCase() === "decorative") {
+                altTextElement.textContent = "🗨️ alt: decorative";
+                altTextElement.classList.add('alt-text', 'alt-decorative');
+            } else {
+                altTextElement.textContent = "📸 alt: " + altText;
+                altTextElement.classList.add('alt-text');
+            }
+
+            // Append the alt text below the image
+            wrapper.appendChild(altTextElement);
+        });
+    </script>
+</body>
+</html>

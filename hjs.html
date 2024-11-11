@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heading Level Hierarchy Debugging</title>
+    <style>
+        /* Default styling for headings */
+        h1, h2, h3, h4, h5, h6 {
+            margin: 10px 0;
+        }
+
+        /* Styling for the warning about incorrect heading hierarchy */
+        .heading-warning {
+            font-size: 14px;
+            font-family: sans-serif;
+            font-weight: bold;
+            color: darkred;
+            border: 2px solid darkred;
+            padding: 5px;
+            margin-top: 5px;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .heading-error {
+            color: red;
+            border-color: red;
+            background-color: #ffebee;
+        }
+
+        .heading-correct {
+            color: green;
+            border-color: green;
+            background-color: #e0f7e0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Main Title of the Page</h1>
+    
+    <!-- Incorrect Hierarchical Order -->
+    <h3>This should be a section under an <h2></h3>
+    
+    <h2>First Section</h2>
+    
+    <h2>Another Section</h2>
+
+    <h3>Subsection of First Section</h3>
+
+    <!-- Missing Subsection under h2 -->
+    <h4>Subsection of Another Section (No h3 before)</h4>
+
+    <p>Some content after the headings to show page flow.</p>
+
+    <script>
+        // JavaScript to check heading level hierarchy
+        document.addEventListener("DOMContentLoaded", function () {
+            const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+            let lastLevel = 0; // Start with an invalid level to trigger an error on the first heading
+
+            headings.forEach(function(heading) {
+                const level = parseInt(heading.nodeName.charAt(1)); // Get the level (1 for h1, 2 for h2, etc.)
+                let message = ''; // Store the message for this heading
+                let warningClass = ''; // Default class for warnings
+
+                // Check if heading levels are in the correct order
+                if (level < lastLevel) {
+                    message = `⚠️ ERROR: Heading ${heading.nodeName} comes after a lower-level heading.`;
+                    warningClass = 'heading-error';
+                } else if (level > lastLevel + 1) {
+                    message = `⚠️ ERROR: Heading ${heading.nodeName} skips levels.`;
+                    warningClass = 'heading-error';
+                } else {
+                    message = `✔️ Heading ${heading.nodeName} is in correct order.`;
+                    warningClass = 'heading-correct';
+                }
+
+                // Add a warning message after the heading
+                const warningElement = document.createElement('div');
+                warningElement.textContent = message;
+                warningElement.classList.add('heading-warning', warningClass);
+
+                heading.insertAdjacentElement('afterend', warningElement);
+
+                // Update the last heading level
+                lastLevel = level;
+            });
+        });
+    </script>
+
+</body>
+</html>
