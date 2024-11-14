@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARIA Role Debugger</title>
+    <style>
+    /* General styles for elements with ARIA roles */
+    [role]:before {
+        content: "Role: " attr(role);
+        border: 2px solid #0077b6; /* Blue border for role indicator */
+        color: #0077b6;
+        display: inline-block;
+        padding: 3px 8px;
+        margin: 5px;
+        font-size: 12px;
+        font-family: sans-serif;
+        font-weight: bold;
+        background: rgba(0, 119, 182, 0.1); /* Light blue background */
+        border-radius: 5px;
+    }
+
+    /* Specific styles for common ARIA roles */
+
+    /* Button role (native or explicit) */
+    [role="button"]:before {
+        background: rgba(255, 193, 7, 0.2); /* Light yellow for buttons */
+        color: #856404; /* Dark yellow text */
+        border-color: #ff9800;
+    }
+
+    /* Link role */
+    [role="link"]:before {
+        background: rgba(13, 110, 253, 0.1); /* Light blue for links */
+        color: #0d6efd; /* Blue text */
+        border-color: #0d6efd;
+    }
+
+    /* Alert role */
+    [role="alert"]:before {
+        background: rgba(255, 99, 71, 0.2); /* Tomato red for alerts */
+        color: #dc3545; /* Red text */
+        border-color: #dc3545;
+    }
+
+    /* Dialog role */
+    [role="dialog"]:before {
+        background: rgba(40, 167, 69, 0.2); /* Light green for dialogs */
+        color: #28a745; /* Green text */
+        border-color: #28a745;
+    }
+
+    /* Tablist role */
+    [role="tablist"]:before {
+        background: rgba(0, 123, 255, 0.1); /* Light blue for tablists */
+        color: #007bff; /* Blue text */
+        border-color: #007bff;
+    }
+
+    /* Generic visual cue for any element with a role */
+    [role]:not([role="button"]):not([role="link"]):not([role="alert"]):not([role="dialog"]):not([role="tablist"]):before {
+        background: rgba(255, 255, 255, 0.3); /* Light grey for other roles */
+        color: #6c757d; /* Grey text */
+        border-color: #6c757d;
+    }
+
+    /* Styling for the label: Role name is displayed as a tooltip (visual indicator) */
+    [role]:hover:before {
+        background-color: rgba(0, 119, 182, 0.3); /* Slightly darker on hover */
+        color: white;
+        cursor: pointer;
+    }
+
+    /* Add some spacing around the elements to ensure visibility of labels */
+    [role] {
+        position: relative;
+        padding-left: 20px; /* Add space for the label */
+    }
+
+    </style>
+</head>
+<body>
+
+    <!-- Example of various roles -->
+    <button role="button">Click Me</button>
+    <a href="#" role="link">This is a link</a>
+    <div role="alert">This is an alert message!</div>
+    <div role="dialog">This is a dialog box</div>
+    <div role="tablist">This is a tab list</div>
+    <div role="complementary">This is a complementary region</div>
+
+</body>
+</html>

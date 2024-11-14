@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Debugging Examples</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        /* Default styling for headings */
+        h1, h2, h3, h4, h5, h6 {
+            margin: 10px 0;
+        }
+
+        /* Styling for warning messages */
+        .heading-warning, .alt-text, .aria-label-warning {
+            font-size: 14px;
+            font-family: sans-serif;
+            font-weight: bold;
+            padding: 5px;
+            margin-top: 5px;
+            border-radius: 5px;
+        }
+
+        .heading-warning {
+            border: 2px solid darkred;
+            background: white;
+        }
+
+        .aria-label-warning {
+            border: 2px solid darkred;
+            background: #ffebee;
+            color: red;
+            font-weight: normal;
+        }
+
+        .heading-error, .alt-empty {
+            color: red;
+            border-color: red;
+            background-color: #ffebee;
+        }
+
+        .heading-correct, .alt-decorative {
+            color: green;
+            border-color: green;
+            background-color: #e0f7e0;
+        }
+
+        .redundant-role:before {
+            content: "⚠️ REDUNDANT ROLE: Use of implicit role!";
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        /* Styling for buttons, links, images, and more */
+        .image-wrapper img {
+            display: block;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            background-color: #e8e8e8;
+            margin-bottom: 10px;
+        }
+
+        button[role="button"]:before, a[role="link"]:before, input[role="textbox"]:before {
+            background: rgba(255, 193, 7, 0.2);
+            color: #856404;
+            border-color: #ff9800;
+        }
+
+        /* Hover styles */
+        [role]:hover:before {
+            background-color: rgba(0, 119, 182, 0.3);
+            color: white;
+            cursor: pointer;
+        }
+
+        .redundant-role {
+            border: 2px solid red;
+            background: #ffe5e5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Main Title of the Page</h1>
+    
+    <!-- Incorrect Hierarchical Order -->
+    <h3>This should be a section under an <h2></h3>
+    
+    <h2>First Section</h2>
+    <h2>Another Section</h2>
+
+    <h3>Subsection of First Section</h3>
+
+    <!-- Missing Subsection under h2 -->
+    <h4>Subsection of Another Section (No h3 before)</h4>
+
+    <p>Some content after the headings to show page flow.</p>
+
+    <h2>ARIA Label Debugging Example</h2>
+
+    <button aria-label="Submit form">Submit form</button>
+    <a href="#" aria-label="Go to homepage">Go to homepage</a>
+    <button aria-label="Submit form">Submit</button>
+    <a href="#" aria-label="Go to homepage">Visit our homepage</a>
+
+    <h2>Image Alt Text Debugging Example</h2>
+
+    <div class="image-wrapper">
+        <img src="https://via.placeholder.com/150" alt="Placeholder image of a laptop" />
+    </div>
+
+    <div class="image-wrapper">
+        <img src="https://via.placeholder.com/150" alt="" />
+    </div>
+
+    <div class="image-wrapper">
+        <img src="https://via.placeholder.com/150" alt="decorative" />
+    </div>
+
+    <h2>ARIA Role Debugger for Redundant Roles</h2>
+
+    <button role="button">Click me (Redundant role)</button>
+    <a href="#" role="link">This is a link</a>
+    <input role="textbox" type="text" />
+
+    <script>
+        // JavaScript to check heading level hierarchy
+        document.addEventListener("DOMContentLoaded", function () {
+            const headings = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+            let lastLevel = 0;
+
+            headings.forEach(function(heading) {
+                const level = parseInt(heading.nodeName.charAt(1));
+                let message = '';
+                let warningClass = '';
+
+                if (level < lastLevel) {
+                    message = `⚠️ ERROR: Heading ${heading.nodeName} comes after a lower-level heading.`;
+                    warningClass = 'heading-error';
+                } else if (level > lastLevel + 1) {
+                    message = `⚠️ ERROR: Heading ${heading.nodeName} skips levels.`;
+                    warningClass = 'heading-error';
+                } else {
+                    message = `✔️ Heading ${heading.nodeName} is in correct order.`;
+                    warningClass = 'heading-correct';
+                }
+
+                const warningElement = document.createElement('div');
+                warningElement.textContent = message;
+                warningElement.classList.add('heading-warning', warningClass);
+
+                heading.insertAdjacentElement('afterend', warningElement);
+                lastLevel = level;
+            });
+        });
+
+        // Function to check for aria-label and text content of buttons and links
+        function checkAriaLabelTextMatch() {
+            const buttons = document.querySelectorAll('button[aria-label], a[aria-label]');
+
+            buttons.forEach(function(button) {
+                const ariaLabel = button.getAttribute('aria-label');
+                const visibleText = button.textContent.trim();
+
+                // Check if aria-label is the same as the visible text
+                if (ariaLabel && ariaLabel === visibleText) {
+                    const warningElement = document.createElement('div');
+                    warningElement.textContent = `⚠️ aria-label "${ariaLabel}" matches visible text. Consider removing the aria-label.`;
+                    warningElement.classList.add('aria-label-warning');
+
+                    button.insertAdjacentElement('afterend', warningElement);
+                }
+            });
+        }
+
+        window.addEventListener('load', () => {
+            checkAriaLabelTextMatch();
+        });
+
+        // Function to check image alt text
+        function checkImageAltText() {
+            const images = document.querySelectorAll('img');
+
+            images.forEach(function(img) {
+                const altText = img.getAttribute('alt').trim();
+
+                let warningMessage = '';
+                let warningClass = '';
+
+                // Case 1: Missing alt text
+                if (!altText) {
+                    warningMessage = `⚠️ Missing alt text for image. Provide a description or use an empty alt attribute for decorative images.`;
+                    warningClass = 'alt-empty';
+                } 
+                // Case 2: Empty alt text (for decorative images)
+                else if (altText === '' || altText.toLowerCase() === 'decorative') {
+                    warningMessage = `✔️ Decorative image has empty alt text. This is acceptable.`;
+                    warningClass = 'alt-decorative';
+                }
+                // Case 3: Valid alt text
+                else {
+                    warningMessage = `✔️ Image has appropriate alt text: "${altText}".`;
+                    warningClass = 'alt-text';
+                }
+
+                const warningElement = document.createElement('div');
+                warningElement.textContent = warningMessage;
+                warningElement.classList.add('alt-text', warningClass);
+
+                img.insertAdjacentElement('afterend', warningElement);
+            });
+        }
+
+        window.addEventListener('load', () => {
+            checkImageAltText();
+        });
+
+        // Function to check for redundant roles
+        function checkRedundantRoles() {
+            const redundantButtonRoles = document.querySelectorAll('button[role="button"]');
+            redundantButtonRoles.forEach(button => {
+                button.classList.add('redundant-role');
+            });
+
+            const redundantLinkRoles = document.querySelectorAll('a[role="link"]');
+            redundantLinkRoles.forEach(link => {
+                link.classList.add('redundant-role');
+            });
+
+            const redundantTextboxRoles = document.querySelectorAll('input[role="textbox"]');
+            redundantTextboxRoles.forEach(input => {
+                input.classList.add('redundant-role');
+            });
+        }
+
+        window.addEventListener('load', () => {
+            checkRedundantRoles();
+        });
+    </script>
+
+</body>
+</html>

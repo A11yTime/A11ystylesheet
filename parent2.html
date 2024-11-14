@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Debugging Examples</title>
+    <style>
+        /* Styling for ARIA and role check results */
+        .aria-label-warning, .redundant-role-warning, .img-warning {
+            font-size: 14px;
+            font-family: sans-serif;
+            font-weight: bold;
+            padding: 5px;
+            margin-top: 5px;
+            border-radius: 5px;
+        }
+
+        .aria-label-warning {
+            border: 2px solid darkred;
+            background: #ffebee;
+            color: red;
+        }
+
+        .redundant-role-warning {
+            border: 2px solid darkorange;
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .valid-aria-label, .valid-role, .valid-img {
+            color: green;
+            background-color: #e0f7e0;
+            border-color: green;
+        }
+
+        .warning-message {
+            color: red;
+        }
+
+        .img-warning {
+            color: red;
+            background-color: #f8d7da;
+            border: 2px solid red;
+        }
+
+        .valid-img {
+            color: green;
+            background-color: #e0f7e0;
+            border-color: green;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Main Title of the Page</h1>
+    
+    <!-- Examples for ARIA Label Debugging -->
+    <button aria-label="Submit form">Submit form</button>
+    <a href="#" aria-label="Go to homepage">Go to homepage</a>
+    <button aria-label="Submit form">Submit</button>
+    <a href="#" aria-label="Go to homepage">Visit our homepage</a>
+
+    <h2>ARIA Role Debugger</h2>
+
+    <button role="button">Click me (Redundant role)</button>
+    <a href="#" role="link">This is a link</a>
+    <input role="textbox" type="text" />
+
+    <h2>Image Debugging</h2>
+
+    <img src="https://via.placeholder.com/150" alt="A placeholder image" />
+    <img src="https://via.placeholder.com/150" alt="" />
+    <img src="https://via.placeholder.com/150" alt="decorative" />
+    <img src="https://via.placeholder.com/150" alt="Description of a meaningful image" />
+
+    <script>
+        // Function to check redundant roles
+        function checkRedundantRoles() {
+            const redundantButtonRoles = document.querySelectorAll('button[role="button"]');
+            redundantButtonRoles.forEach(button => {
+                button.classList.add('redundant-role-warning');
+                const warningElement = document.createElement('div');
+                warningElement.textContent = '⚠️ Redundant role "button" on <button>. The <button> element is implicitly a button.';
+                warningElement.classList.add('redundant-role-warning');
+                button.insertAdjacentElement('afterend', warningElement);
+            });
+
+            const redundantLinkRoles = document.querySelectorAll('a[role="link"]');
+            redundantLinkRoles.forEach(link => {
+                link.classList.add('redundant-role-warning');
+                const warningElement = document.createElement('div');
+                warningElement.textContent = '⚠️ Redundant role "link" on <a>. The <a> element is implicitly a link.';
+                warningElement.classList.add('redundant-role-warning');
+                link.insertAdjacentElement('afterend', warningElement);
+            });
+
+            const redundantTextboxRoles = document.querySelectorAll('input[role="textbox"]');
+            redundantTextboxRoles.forEach(input => {
+                input.classList.add('redundant-role-warning');
+                const warningElement = document.createElement('div');
+                warningElement.textContent = '⚠️ Redundant role "textbox" on <input>. The <input> element is implicitly a textbox.';
+                warningElement.classList.add('redundant-role-warning');
+                input.insertAdjacentElement('afterend', warningElement);
+            });
+        }
+
+        // Function to check ARIA label text match
+        function checkAriaLabelTextMatch() {
+            const elementsWithAriaLabel = document.querySelectorAll('[aria-label]');
+
+            elementsWithAriaLabel.forEach(function(element) {
+                const ariaLabel = element.getAttribute('aria-label');
+                const visibleText = element.textContent.trim();
+
+                if (ariaLabel === visibleText && visibleText !== '') {
+                    const warningElement = document.createElement('div');
+                    warningElement.textContent = `⚠️ aria-label "${ariaLabel}" matches visible text. Consider removing the aria-label.`;
+                    warningElement.classList.add('aria-label-warning');
+                    element.insertAdjacentElement('afterend', warningElement);
+                } else {
+                    const validMessage = document.createElement('div');
+                    validMessage.textContent = `✔️ aria-label is appropriate for this element.`;
+                    validMessage.classList.add('valid-aria-label');
+                    element.insertAdjacentElement('afterend', validMessage);
+                }
+            });
+        }
+
+        // Function to check image alt text
+        function checkImageAltText() {
+            const images = document.querySelectorAll('img');
+
+            images.forEach((img) => {
+                const altText = img.getAttribute('alt');
+                const role = img.getAttribute('role');
+                const ariaHidden = img.getAttribute('aria-hidden');
+
+                // Check for missing alt text
+                if (!altText) {
+                    const warningElement = document.createElement('div');
+                    warningElement.textContent = '⚠️ Missing alt text on image.';
+                    warningElement.classList.add('img-warning');
+                    img.insertAdjacentElement('afterend', warningElement);
+                } else if (altText === "") {
+                    // Empty alt text, should only be used for decorative images
+                    if (!(role === 'presentation' || ariaHidden === 'true')) {
+                        const warningElement = document.createElement('div');
+                        warningElement.textContent = '⚠️ Empty alt text (alt="") used for a non-decorative image. Should be meaningful or role="presentation" or aria-hidden="true" for decorative images.';
+                        warningElement.classList.add('img-warning');
+                        img.insertAdjacentElement('afterend', warningElement);
+                    } else {
+                        const validMessage = document.createElement('div');
+                        validMessage.textContent = '✔️ Image has empty alt text for decorative purposes.';
+                        validMessage.classList.add('valid-img');
+                        img.insertAdjacentElement('afterend', validMessage);
+                    }
+                } else {
+                    // Ensure alt text is meaningful
+                    const validMessage = document.createElement('div');
+                    validMessage.textContent = `✔️ Alt text is provided: "${altText}"`;
+                    validMessage.classList.add('valid-img');
+                    img.insertAdjacentElement('afterend', validMessage);
+                }
+            });
+        }
+
+        // Run ARIA Role and Label Check when the page is loaded
+        window.addEventListener('load', () => {
+            checkRedundantRoles(); // Check for redundant roles
+            checkAriaLabelTextMatch(); // Check aria-labels and text
+            checkImageAltText(); // Check image alt text
+        });
+    </script>
+
+</body>
+</html>
